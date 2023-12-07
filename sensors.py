@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import RPi.GPIO as GPIO
 import time
+GPIO.setmode(GPIO.BCM)
 
 SLEEP_TIME = 0.5
 
