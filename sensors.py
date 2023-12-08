@@ -32,7 +32,7 @@ class Sensor(ABC):
         threading.Timer(SENSOR_SLEEP_TIME, self.track_state_change).start()
     
     def send_state_to_server(self):
-        data_to_send = {'uuid': self.uuid, 'position': self.position, 'sensor type': self.sensor_type}
+        data_to_send = {'uuid': self.uuid, 'state': self.state, 'position': self.position, 'sensor type': self.sensor_type}
         json_data = json.dumps(data_to_send)
         self.server_socket.sendto(json_data.encode('utf-8'), (CENTRAL_IP,CENTRAL_GATE))
         
