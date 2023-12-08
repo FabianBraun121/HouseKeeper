@@ -4,16 +4,13 @@ import uuid
 import threading
 import json
 import socket
+from constants import SENSOR_SLEEP_TIME, CENTRAL_IP, CENTRAL_GATE
 GPIO.setmode(GPIO.BCM)
-
-SLEEP_TIME = 0.5
-CENTRAL_IP = '192.168.1.134'
-CENTRAL_GATE = 6969
 
 
 class Sensor(ABC):
     def __init__(self, position:str=None):
-        self.uuid = uuid.uuid4()
+        self.uuid = str(uuid.uuid4())
         self.state = 0
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.position = position
@@ -31,8 +28,8 @@ class Sensor(ABC):
     def track_state_change(self):
         if self.get_sensor_state() != self.state:
             self.state =  self.get_sensor_state()
-            print(f'change in state to {self.state}')
-        threading.Timer(SLEEP_TIME, self.track_state_change).start()
+            self.send_state_to_server()
+        threading.Timer(SENSOR_SLEEP_TIME, self.track_state_change).start()
     
     def send_state_to_server(self):
         data_to_send = {'uuid': self.uuid, 'position': self.position, 'sensor type': self.sensor_type}
