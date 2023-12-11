@@ -24,3 +24,4 @@ class Controller:
 
 config = Config()
 controller = Controller(config)
+controller.start()

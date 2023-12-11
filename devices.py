@@ -15,10 +15,7 @@ class Device(ABC):
         self.uuid = str(uuid.uuid4())
         self.position = position
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        initial_data = {'type': self.type,
-                        'uuid': self.uuid, 'position': self.position}
-        self.socket.sendto(json.dumps(initial_data).encode(
-            'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('initialization_gate')))
+        self.periodical_initialization()
         print(f'{self.uuid} initialized')
         threading.Thread(target=self.listen_for_message).start()
 
@@ -38,6 +35,14 @@ class Device(ABC):
                 self.process_message(message)
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON data: {e}")
+
+    def periodical_initialization(self):
+        initial_data = {'type': self.type,
+                        'uuid': self.uuid, 'position': self.position}
+        self.socket.sendto(json.dumps(initial_data).encode(
+            'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('initialization_gate')))
+        threading.Timer(self.cfg.get('periodical_initialization_time'),
+                        self.periodical_initialization).start()
 
 
 class Sensor(Device):

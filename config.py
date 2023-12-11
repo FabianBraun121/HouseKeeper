@@ -5,7 +5,7 @@ DEFAULT_CONFIG = {
     "initialization_gate": 5001,
     "sensor_gate": 5002,
     "reactor_gate": 5003,
-
+    "periodical_initialization_time": 10,
     "sensor_sleep_time": 0.5,
     "alarm_num_images": 5,
 }
