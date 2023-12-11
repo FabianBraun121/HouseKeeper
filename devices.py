@@ -1,3 +1,4 @@
+from config import Config
 from abc import ABC, abstractmethod, abstractproperty
 import RPi.GPIO as GPIO
 from picamera2 import Picamera2
@@ -18,15 +19,10 @@ class Device(ABC):
                         'uuid': self.uuid, 'position': self.position}
         self.socket.sendto(json.dumps(initial_data).encode(
             'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('initialization_gate')))
-        self.socket.bind(self.cfg.get('central_ip'), self.gate)
         threading.Thread(target=self.listen_for_message).start()
 
     @abstractproperty
     def type(self):
-        pass
-
-    @abstractproperty
-    def gate(self):
         pass
 
     @abstractmethod
@@ -53,10 +49,6 @@ class Sensor(Device):
     def type(self):
         return 'Sensor'
 
-    @property
-    def gate(self):
-        return self.cfg.get('sensor_gate')
-
     @abstractmethod
     def get_sensor_state(self):
         pass
@@ -81,7 +73,8 @@ class Sensor(Device):
         data_to_send = {'type': self.type, 'uuid': self.uuid, 'state': self.state,
                         'position': self.position, 'sensor type': self.sensor_type}
         json_data = json.dumps(data_to_send)
-        self.server_socket.send(json_data.encode('utf-8'))
+        self.socket.sendto(json_data.encode(
+            'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('sensor_gate')))
 
 
 class IRMovementSensor(Sensor):
@@ -123,14 +116,14 @@ class Camera(Device):
             image_data = file.read()
         data_to_send = {'type': self.type, 'uuid': self.uuid,
                         'position': self.position, 'image': image_data}
-        self.socket.send(json.dumps(data_to_send).encode('utf-8'))
+        self.socket.sendto(json.dumps(data_to_send).encode(
+            'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('reactor_gate')))
 
     def take_image(self):
         self.picam2.start_and_capture_file(
             self.image_fname, delay=0, show_preview=False)
 
 
-from config import Config
 config = Config()
 sensor = IRMovementSensor(config, 'Living room', 18)
 camera = Camera(config, 'Living room')

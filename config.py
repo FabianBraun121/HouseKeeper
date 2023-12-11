@@ -7,7 +7,9 @@ DEFAULT_CONFIG = {
     "reactor_gate": 1003,
 
     "sensor_sleep_time": 0.5,
+    "alarm_num_images": 5,
 }
+
 
 class Config:
     def __init__(self):
@@ -23,10 +25,9 @@ class Config:
     def save_config(self):
         with open('config.json', 'w') as file:
             json.dump(self.config, file, indent=4)
-    
+
     def get(self, key):
         return self.config.get(key)
 
     def set(self, key, value):
         self.config[key] = value
-    

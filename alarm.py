@@ -10,13 +10,14 @@ class Alarm:
         self.controller = controller
         self.cfg = self.controller.cfg
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.address = (self.cfg.get('central_ip'), self.cfg.get('reactor_gate'))
+        self.address = (self.cfg.get('central_ip'),
+                        self.cfg.get('reactor_gate'))
         self.socket.bind(self.address)
         threading.Thread(target=self.process_incoming_data).start()
 
     def alarmize(self, position):
         print(f'Alarm in the {position}')
-        threading.Thread(target=self.take_images(position)).start()
+        threading.Thread(target=self.take_images, args=(position,)).start()
 
     def process_incoming_data(self):
         while True:
@@ -29,13 +30,15 @@ class Alarm:
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON data: {e}")
 
-    def take_images(self, position, num=5,  distance=2):
+    def take_images(self, position):
         if self.controller.position_relation is not None:
-            pass # needs to be implemented first
+            pass  # needs to be implemented first
         else:
-            available_cameras = [c for c in self.controller.reactors.items() if c['position']==position and c['type']=='Camera']
-        for _ in range(num):
+            available_cameras = [c for c in self.controller.reactors.items(
+            ) if c['position'] == position and c['type'] == 'Camera']
+        for _ in range(self.cfg.get('alarm_num_images')):
             for camera in available_cameras:
                 message = {'uuid': camera["uuid"], 'action': 'take image'}
-                self.socket.sendto(json.dump(message).encode('utf-8'), camera['address'])
+                self.socket.sendto(json.dumps(message).encode(
+                    'utf-8'), camera['address'])
             time.sleep(1)

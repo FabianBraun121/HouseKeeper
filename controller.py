@@ -1,3 +1,4 @@
+from config import Config
 import socket
 import threading
 import json
@@ -9,8 +10,8 @@ from alarm import Alarm
 class Controller:
     def __init__(self, config):
         self.cfg = config
-        self.sensors = dict
-        self.reactors = dict
+        self.sensors = {}
+        self.reactors = {}
         self.alarm = Alarm(self)
         self.position_relation = None
 
@@ -23,14 +24,6 @@ class Controller:
             self.alarm.alarmize(data['position'])
         self.sensors[data['uuid']] = data
 
-    def alarm(self, data: dict):
-        print(f'Alarm, in the {data["position"]}')
-        for device in self.device_address.values():
-            if device['type'] == 'Camera' and device['position'] == data['position']:
-                self.camera_socket.sendto(
-                    "Take Images".encode('utf-8'), device['address'])
 
-
-from config import Config
 config = Config()
 controller = Controller()
