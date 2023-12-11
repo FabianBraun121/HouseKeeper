@@ -33,7 +33,7 @@ class Alarm:
         if self.controller.position_relation is not None:
             pass  # needs to be implemented first
         else:
-            available_cameras = [c for c in self.controller.reactors.items(
+            available_cameras = [c for c in self.controller.reactors.values(
             ) if c['position'] == position and c['type'] == 'Camera']
         for _ in range(self.cfg.get('alarm_num_images')):
             for camera in available_cameras:
