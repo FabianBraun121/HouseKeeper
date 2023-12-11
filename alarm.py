@@ -11,7 +11,6 @@ class Alarm:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.address = (self.cfg.get('central_ip'),
                         self.cfg.get('reactor_gate'))
-        print(self.address)
         self.socket.bind(self.address)
         threading.Thread(target=self.process_incoming_data).start()
 

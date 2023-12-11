@@ -1,10 +1,10 @@
 import json
 
 DEFAULT_CONFIG = {
-    "central_ip": "192.168.1.134",
+    "central_ip": "192.168.178.38",
     "initialization_gate": 1001,
     "sensor_gate": 1002,
-    "reactor_gate": 6969,
+    "reactor_gate": 1003,
 
     "sensor_sleep_time": 0.5,
     "alarm_num_images": 5,
