@@ -17,17 +17,14 @@ class DeviceInitializer:
 
     def process_initializations(self):
         while True:
-            data, initial_address = self.socket.recvfrom(1024)
+            data, address = self.socket.recvfrom(1024)
             try:
                 data = json.loads(data.decode('utf-8'))
+                data['address'] = address
                 if data['type'] == 'Sensor':
-                    data['address'] = (initial_address[0],
-                                       self.cfg.get('sensor_gate'))
                     if data['uuid'] not in self.controller.sensors:
                         self.controller.sensors[data['uuid']] = data
                 else:
-                    data['address'] = (initial_address[0],
-                                       self.cfg.get('reactor_gate'))
                     if data['uuid'] not in self.controller.reactors:
                         self.controller.reactors[data['uuid']] = data
             except json.JSONDecodeError as e:

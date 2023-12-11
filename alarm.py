@@ -12,7 +12,6 @@ class Alarm:
         self.address = (self.cfg.get('central_ip'),
                         self.cfg.get('reactor_gate'))
         self.socket.bind(self.address)
-        print(f'The server address is {self.address}')
         threading.Thread(target=self.process_incoming_data).start()
 
     def alarmize(self, position):
@@ -37,7 +36,6 @@ class Alarm:
             ) if c['position'] == position and c['type'] == 'Camera']
         for _ in range(self.cfg.get('alarm_num_images')):
             for camera in available_cameras:
-                print(f'message is sent to {camera["address"]}')
                 message = {'uuid': camera["uuid"], 'action': 'take image'}
                 self.socket.sendto(json.dumps(message).encode(
                     'utf-8'), camera['address'])
