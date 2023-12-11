@@ -16,7 +16,6 @@ class Device(ABC):
         self.position = position
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.periodical_initialization()
-        print(f'{self.uuid} initialized')
         threading.Thread(target=self.listen_for_message).start()
 
     @abstractproperty
@@ -67,7 +66,6 @@ class Sensor(Device):
         if self.get_sensor_state() != self.state:
             self.state = self.get_sensor_state()
             self.send_state_to_server()
-            print('state change sent')
         threading.Timer(self.cfg.get('sensor_sleep_time'),
                         self.track_state_change).start()
 
@@ -77,7 +75,6 @@ class Sensor(Device):
                 self.send_state_to_server()
 
     def send_state_to_server(self):
-        print(f'current state is {self.state}')
         data_to_send = {'type': self.type, 'uuid': self.uuid, 'state': self.state,
                         'position': self.position, 'sensor type': self.sensor_type}
         json_data = json.dumps(data_to_send)

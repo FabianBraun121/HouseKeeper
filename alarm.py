@@ -15,7 +15,6 @@ class Alarm:
         threading.Thread(target=self.process_incoming_data).start()
 
     def alarmize(self, position):
-        print(f'Alarm in the {position}')
         threading.Thread(target=self.take_images, args=(position,)).start()
 
     def process_incoming_data(self):
