@@ -23,4 +23,4 @@ class Controller:
 
 
 config = Config()
-controller = Controller()
+controller = Controller(config)
