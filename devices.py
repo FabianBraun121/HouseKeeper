@@ -19,6 +19,7 @@ class Device(ABC):
                         'uuid': self.uuid, 'position': self.position}
         self.socket.sendto(json.dumps(initial_data).encode(
             'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('initialization_gate')))
+        print(f'{self.uuid} initialized')
         threading.Thread(target=self.listen_for_message).start()
 
     @abstractproperty
@@ -61,6 +62,7 @@ class Sensor(Device):
         if self.get_sensor_state() != self.state:
             self.state = self.get_sensor_state()
             self.send_state_to_server()
+            print('state change sent')
         threading.Timer(self.cfg.get('sensor_sleep_time'),
                         self.track_state_change).start()
 
@@ -112,6 +114,7 @@ class Camera(Device):
 
     def send_image_to_server(self):
         self.take_image()
+        print('image taken')
         with open(self.image_fname, 'rb') as file:
             image_data = file.read()
         data_to_send = {'type': self.type, 'uuid': self.uuid,
