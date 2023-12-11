@@ -1,10 +1,36 @@
 import socket
-from constants import CENTRAL_IP, CENTRAL_GATE
+import threading
+import json
+from device_initializer import DeviceInitializer
+from sensor_listener import SensorListener
+from alarm import Alarm
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server_socket.bind((CENTRAL_IP, CENTRAL_GATE))
 
-while True:
-    data, sensor_address = server_socket.recvfrom(1024)
-    # Process the received data and take appropriate actions
-    print(f"Received data from {sensor_address}: {data}")
+class Controller:
+    def __init__(self, config):
+        self.cfg = config
+        self.sensors = dict
+        self.reactors = dict
+        self.alarm = Alarm(self)
+        self.position_relation = None
+
+    def start(self):
+        DeviceInitializer(self).start()
+        SensorListener(self).start()
+
+    def update_sensor_state(self, data):
+        if self.sensors[data['uuid']]['state'] != 1 and data['state'] == 1:
+            self.alarm.alarmize(data['position'])
+        self.sensors[data['uuid']] = data
+
+    def alarm(self, data: dict):
+        print(f'Alarm, in the {data["position"]}')
+        for device in self.device_address.values():
+            if device['type'] == 'Camera' and device['position'] == data['position']:
+                self.camera_socket.sendto(
+                    "Take Images".encode('utf-8'), device['address'])
+
+
+from config import Config
+config = Config()
+controller = Controller()
