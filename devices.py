@@ -79,8 +79,8 @@ class Sensor(Device):
 
 class IRMovementSensor(Sensor):
     def __init__(self, config, position, pin):
-        super().__init__(config, position)
         self.pin = pin
+        super().__init__(config, position)
         GPIO.setup(self.pin, GPIO.IN)
 
     def get_sensor_state(self):

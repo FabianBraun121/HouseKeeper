@@ -1,7 +1,4 @@
 from config import Config
-import socket
-import threading
-import json
 from device_initializer import DeviceInitializer
 from sensor_listener import SensorListener
 from alarm import Alarm

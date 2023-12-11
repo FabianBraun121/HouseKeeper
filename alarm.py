@@ -2,11 +2,10 @@ import socket
 import threading
 import time
 import json
-from controller import Controller
 
 
 class Alarm:
-    def __init__(self, controller: Controller):
+    def __init__(self, controller):
         self.controller = controller
         self.cfg = self.controller.cfg
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
