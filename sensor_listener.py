@@ -21,6 +21,9 @@ class SensorListener:
             print('state change received')
             try:
                 data = json.loads(data.decode('utf-8'))
+                print(data['state'])
+                if data['state'] is None:
+                    print('state is None')
                 data['address'] = address
                 self.controller.update_sensor_state(data)
             except json.JSONDecodeError as e:

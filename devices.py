@@ -77,6 +77,7 @@ class Sensor(Device):
                 self.send_state_to_server()
 
     def send_state_to_server(self):
+        print(f'current state is {self.state}')
         data_to_send = {'type': self.type, 'uuid': self.uuid, 'state': self.state,
                         'position': self.position, 'sensor type': self.sensor_type}
         json_data = json.dumps(data_to_send)
