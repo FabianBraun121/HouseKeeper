@@ -20,7 +20,7 @@ class DeviceInitializer:
             data, initial_address = self.socket.recvfrom(1024)
             try:
                 data = json.loads(data.decode('utf-8'))
-                print(data['address'])
+                print(initial_address)
                 if data['type'] == 'Sensor':
                     data['address'] = (initial_address[0],
                                        self.cfg.get('sensor_gate'))
