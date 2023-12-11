@@ -24,10 +24,12 @@ class DeviceInitializer:
                 if data['type'] == 'Sensor':
                     data['address'] = (initial_address[0],
                                        self.cfg.get('sensor_gate'))
-                    self.controller.sensors[data['uuid']] = data
+                    if data['uuid'] not in self.controller.sensors:
+                        self.controller.sensors[data['uuid']] = data
                 else:
                     data['address'] = (initial_address[0],
                                        self.cfg.get('reactor_gate'))
-                    self.controller.reactors[data['uuid']] = data
+                    if data['uuid'] not in self.controller.reactors:
+                        self.controller.reactors[data['uuid']] = data
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON data: {e}")

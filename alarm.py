@@ -23,6 +23,7 @@ class Alarm:
             data, _ = self.socket.recvfrom(1024)
             try:
                 received_data = json.loads(data.decode('utf-8'))
+                print(received_data)
                 image_data = received_data.get('image')
                 with open('received_img.jpg', 'wb') as file:
                     file.write(image_data)
