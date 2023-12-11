@@ -112,7 +112,7 @@ class Camera(Device):
 
     def process_message(self, message):
         if self.uuid == message['uuid']:
-            if message['message'] == 'take image':
+            if message.get('action', 0) == 'take image':
                 self.send_image_to_server()
 
     def send_image_to_server(self):
