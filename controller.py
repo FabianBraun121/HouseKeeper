@@ -17,6 +17,7 @@ class Controller:
         SensorListener(self).start()
 
     def update_sensor_state(self, data):
+        print(self.sensors[data['uuid']])
         if self.sensors[data['uuid']]['state'] != 1 and data['state'] == 1:
             self.alarm.alarmize(data['position'])
         self.sensors[data['uuid']] = data
