@@ -68,6 +68,8 @@ class Sensor(Device):
     def track_state_change(self):
         if self.get_sensor_state() != self.state:
             self.state = self.get_sensor_state()
+            print(
+                f'state is {self.state} in divice_data_state is {self.device_data.get("state")}')
             self.send_device_data_to_server()
         threading.Timer(self.cfg.get('sensor_sleep_time'),
                         self.track_state_change).start()
