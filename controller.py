@@ -43,6 +43,7 @@ class Controller:
                     device_data['position'])).start()
 
     def initialize_divice(self, device_data):
+        print('sensors are initialized')
         if device_data['type'] == 'Sensor':
             with self.sensors_lock:
                 device_data['state'] = 0
