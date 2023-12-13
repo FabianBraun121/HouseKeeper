@@ -8,7 +8,7 @@ import json
 import socket
 import logging
 
-logging.getLogger('picamera2').setLevel(logging.WARNING)
+logging.disable(logging.CRITICAL)
 GPIO.setmode(GPIO.BCM)
 
 
