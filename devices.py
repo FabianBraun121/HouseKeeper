@@ -6,6 +6,9 @@ import uuid
 import threading
 import json
 import socket
+import logging
+
+logging.getLogger('picamera2').setLevel(logging.WARNING)
 GPIO.setmode(GPIO.BCM)
 
 

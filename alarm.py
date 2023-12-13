@@ -7,6 +7,7 @@ class Alarm:
         self.communication_server = communication_server
 
     def alarm(self, position):
+        print(f'Alarm in the {position}')
         self.take_images(position)
 
     def take_images(self, position):
