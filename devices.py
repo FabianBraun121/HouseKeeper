@@ -113,21 +113,19 @@ class Camera(Device):
     def process_message(self, message):
         if self.uuid == message['uuid']:
             if message.get('action', 0) == 'take image':
-                self.send_image_to_server()
+                print('image has been taken')
+                image = self.take_image()
+                self.upload_image_to_google_drive(image)
 
-    def send_image_to_server(self):
-        self.take_image()
-        print('image taken')
-        with open(self.image_fname, 'rb') as file:
-            image_data = file.read()
-        data_to_send = {'type': self.type, 'uuid': self.uuid,
-                        'position': self.position, 'image': image_data}
-        self.socket.sendto(json.dumps(data_to_send).encode(
-            'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('reactor_gate')))
+    def upload_image_to_google_drive(self):
+        pass
 
     def take_image(self):
         self.picam2.start_and_capture_file(
             self.image_fname, delay=0, show_preview=False)
+        with open(self.image_fname, 'rb') as file:
+            image = file.read()
+        return image
 
 
 config = Config()

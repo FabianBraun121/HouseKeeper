@@ -1,10 +1,11 @@
 import json
 
 DEFAULT_CONFIG = {
-    "central_ip": "192.168.178.38",
-    "initialization_gate": 5001,
-    "sensor_gate": 5002,
-    "reactor_gate": 5003,
+    "server_ip": "192.168.178.38",
+    "server_port": 50001,
+    "sensor_state_message": "sensor state",
+    "initialize_device_message": "initilize device",
+    "take_image_message": "take_image",
     "periodical_initialization_time": 10,
     "sensor_sleep_time": 0.5,
     "alarm_num_images": 5,
