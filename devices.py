@@ -18,7 +18,7 @@ class Device(ABC):
         self.server_address = (self.cfg.get('server_ip'),
                                self.cfg.get('server_port'))
         self.device_data = {'type': self.type, 'uuid': self.uuid,
-                            'position': self.position, 'message': 'device_data'}
+                            'position': self.position, 'message': self.cfg.get('device_data_message')}
         self.periodical_device_data_push()
         threading.Thread(target=self.listen_for_incoming_data).start()
 
@@ -74,7 +74,7 @@ class Sensor(Device):
 
     def process_incoming_data(self, data):
         if self.uuid == data['uuid']:
-            if data['message'] == 'get state':
+            if data['message'] == self.cfg.get('device_data_message'):
                 self.send_device_data_to_server()
 
     def send_device_data_to_server(self):
@@ -113,7 +113,7 @@ class Camera(Device):
         return 'Camera'
 
     def process_incoming_data(self, data):
-        if data.get('message', 0) == 'take image':
+        if data.get('message', 0) == self.cfg.get('take_image_message'):
             print('image has been taken')
             image = self.take_image()
             self.upload_image_to_google_drive(image)

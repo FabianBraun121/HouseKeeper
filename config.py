@@ -4,7 +4,7 @@ DEFAULT_CONFIG = {
     "server_ip": "192.168.178.38",
     "server_port": 50001,
     "device_data_message": "device data",
-    "take_image_message": "take_image",
+    "take_image_message": "take image",
     "periodical_device_data_push_time": 10,
     "sensor_sleep_time": 0.5,
     "alarm_num_images": 5,

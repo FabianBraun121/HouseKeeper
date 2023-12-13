@@ -25,7 +25,7 @@ class CommunicationServer:
                 data = json.loads(data.decode('utf-8'))
                 data['address'] = address
                 message_type = data['message']
-                if message_type == self.controller.cfg.get('device_data'):
+                if message_type == self.controller.cfg.get('device_data_message'):
                     self.controller.process_device_data(data)
                 else:
                     raise ValueError(f"Unknown message type {message_type}")
