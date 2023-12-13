@@ -8,9 +8,9 @@ class Controller:
     def __init__(self, config):
         self.cfg = config
         self.sensors = {}
-        self.sensors_lock = threading.lock()
+        self.sensors_lock = threading.Lock()
         self.reactors = {}
-        self.reactors_lock = threading.lock()
+        self.reactors_lock = threading.Lock()
         self.communication_server = CommunicationServer(self)
         self.alarm = Alarm(self)
         self.position_relation = None
