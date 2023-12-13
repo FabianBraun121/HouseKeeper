@@ -9,8 +9,6 @@ import json
 import socket
 
 GPIO.setmode(GPIO.BCM)
-Picamera2.set_logging(Picamera2.ERROR)
-
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3"
 
 
