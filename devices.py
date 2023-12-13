@@ -8,6 +8,7 @@ import json
 import socket
 
 GPIO.setmode(GPIO.BCM)
+Picamera2.set_logging(Picamera2.ERROR)
 
 
 class Device(ABC):
@@ -100,7 +101,7 @@ class Camera(Device):
     def __init__(self, config, position):
         super().__init__(config, position)
         self.image_fname = "img.jpg"
-        self.picam2 = Picamera2(verbose_console=0)
+        self.picam2 = Picamera2()
 
     @property
     def gate(self):
