@@ -6,9 +6,7 @@ import uuid
 import threading
 import json
 import socket
-import logging
 
-logging.disable(logging.CRITICAL)
 GPIO.setmode(GPIO.BCM)
 
 
@@ -102,7 +100,7 @@ class Camera(Device):
     def __init__(self, config, position):
         super().__init__(config, position)
         self.image_fname = "img.jpg"
-        self.picam2 = Picamera2()
+        self.picam2 = Picamera2(verbose_console=0)
 
     @property
     def gate(self):
