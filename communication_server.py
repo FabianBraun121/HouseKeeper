@@ -22,6 +22,7 @@ class CommunicationServer:
         while self.is_listening:
             data, address = self.socket.recvfrom(1024)
             try:
+                print('data has been received')
                 data = json.loads(data.decode('utf-8'))
                 data['address'] = address
                 message_type = data['message']

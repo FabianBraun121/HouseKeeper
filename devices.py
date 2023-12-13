@@ -78,6 +78,8 @@ class Sensor(Device):
     def send_device_data_to_server(self):
         json_data = json.dumps(self.device_data)
         self.socket.sendto(json_data.encode('utf-8'), self.server_address)
+        print(f'data has been sent to {self.server_address}')
+        print(self.device_data)
 
 
 class IRMovementSensor(Sensor):
