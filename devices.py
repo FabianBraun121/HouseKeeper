@@ -72,7 +72,7 @@ class Sensor(Device):
         threading.Timer(self.cfg.get('sensor_sleep_time'),
                         self.track_state_change).start()
 
-    def process_incoming(self, data):
+    def process_incoming_data(self, data):
         if self.uuid == data['uuid']:
             if data['message'] == 'get state':
                 self.send_device_data_to_server()
