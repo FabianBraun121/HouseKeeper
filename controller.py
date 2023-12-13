@@ -24,6 +24,7 @@ class Controller:
         self.communication_server.stop()
 
     def process_device_data(self, device_data):
+        print('device data has been received')
         if any(device_data['uuid'] not in d for d in (self.sensors, self.reactors)):
             self.initialize_divice(device_data)
         if device_data['uuid'] in self.sensors:
@@ -32,6 +33,8 @@ class Controller:
                 current_state = self.sensors.get(uuid).get('state', 0)
 
                 cast_alarm = current_state != 1 and device_data['state'] == 1
+                print(
+                    f'current state {current_state}, device state {device_data["state"]}, cast_alarm {cast_alarm}')
                 self.sensors[uuid] = device_data
 
             if cast_alarm:
