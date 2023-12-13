@@ -35,6 +35,7 @@ class Controller:
                 self.sensors[uuid] = device_data
 
             if cast_alarm:
+                print('alarm has been cast')
                 threading.Thread(target=self.alarm.alarm(
                     device_data['position'])).start()
 

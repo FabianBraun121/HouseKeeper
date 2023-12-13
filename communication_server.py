@@ -34,5 +34,7 @@ class CommunicationServer:
                 print(f"Error decoding JSON data: {e}")
 
     def send_data_to(self, data, address):
+        print(f'message sent')
+        print(data)
         encoded_data = json.dumps(data).encode('utf-8')
         self.socket.sendto(encoded_data, address)
