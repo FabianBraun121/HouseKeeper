@@ -12,13 +12,11 @@ GPIO.setmode(GPIO.BCM)
 class Device(ABC):
     def __init__(self, config, position: str = None):
         self.cfg = config
-        self.uuid = str(uuid.uuid4())
-        self.position = position
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_address = (self.cfg.get('server_ip'),
                                self.cfg.get('server_port'))
-        self.device_data = {'type': self.type, 'uuid': self.uuid,
-                            'position': self.position, 'message': self.cfg.get('device_data_message')}
+        self.device_data = {'type': self.type, 'uuid': str(uuid.uuid4()),
+                            'position': position, 'message': self.cfg.get('device_data_message')}
         self.periodical_device_data_push()
         threading.Thread(target=self.listen_for_incoming_data).start()
 
@@ -49,8 +47,7 @@ class Device(ABC):
 class Sensor(Device):
     def __init__(self, config, position):
         super().__init__(config, position)
-        self.state = 0
-        self.device_data['state'] = self.state
+        self.device_data['state'] = 0
         threading.Thread(target=self.track_state_change).start()
 
     @property
@@ -66,10 +63,8 @@ class Sensor(Device):
         pass
 
     def track_state_change(self):
-        if self.get_sensor_state() != self.state:
-            self.state = self.get_sensor_state()
-            print(
-                f'state is {self.state} in divice_data_state is {self.device_data.get("state")}')
+        if self.get_sensor_state() != self.device_data.get('state'):
+            self.device_data['state'] = self.get_sensor_state()
             self.send_device_data_to_server()
         threading.Timer(self.cfg.get('sensor_sleep_time'),
                         self.track_state_change).start()

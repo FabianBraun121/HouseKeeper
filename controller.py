@@ -31,11 +31,12 @@ class Controller:
                 uuid = device_data['uuid']
                 current_state = self.sensors.get(uuid).get('state', 0)
 
-                if current_state != 1 and device_data['state'] == 1:
-                    threading.Thread(target=self.alarm.alarm(
-                        device_data['position'])).start()
-
+                cast_alarm = current_state != 1 and device_data['state'] == 1
                 self.sensors[uuid] = device_data
+
+            if cast_alarm:
+                threading.Thread(target=self.alarm.alarm(
+                    device_data['position'])).start()
 
     def initialize_divice(self, device_data):
         if device_data['type'] == 'Sensor':
