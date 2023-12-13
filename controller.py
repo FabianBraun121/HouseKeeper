@@ -12,7 +12,7 @@ class Controller:
         self.reactors = {}
         self.reactors_lock = threading.Lock()
         self.communication_server = CommunicationServer(self)
-        self.alarm = Alarm(self)
+        self.alarm = Alarm(self, self.communication_server)
         self.position_relation = None
 
     def start(self):
