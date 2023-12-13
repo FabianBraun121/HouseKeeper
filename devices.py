@@ -17,25 +17,25 @@ class Device(ABC):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_address = (self.cfg.get('server_ip'),
                                self.cfg.get('server_port'))
-        self.device_data = {'type': self.type,
-                            'uuid': self.uuid, 'position': self.position}
+        self.device_data = {'type': self.type, 'uuid': self.uuid,
+                            'position': self.position, 'message': 'device_data'}
         self.periodical_device_data_push()
-        threading.Thread(target=self.listen_for_message).start()
+        threading.Thread(target=self.listen_for_incoming_data).start()
 
     @abstractproperty
     def type(self):
         pass
 
     @abstractmethod
-    def process_message(self, message):
+    def process_incoming_data(self, message):
         pass
 
-    def listen_for_message(self):
+    def listen_for_incoming_data(self):
         while True:
             data, _ = self.socket.recvfrom(1024)
             try:
-                message = json.loads(data.decode('utf-8'))
-                self.process_message(message)
+                data = json.loads(data.decode('utf-8'))
+                self.process_incoming_data(data)
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON data: {e}")
 
@@ -43,7 +43,7 @@ class Device(ABC):
         self.socket.sendto(json.dumps(self.device_data).encode(
             'utf-8'), self.server_address)
         threading.Timer(self.cfg.get('periodical_device_data_push_time'),
-                        self.periodical_initialization).start()
+                        self.periodical_device_data_push).start()
 
 
 class Sensor(Device):
@@ -72,9 +72,9 @@ class Sensor(Device):
         threading.Timer(self.cfg.get('sensor_sleep_time'),
                         self.track_state_change).start()
 
-    def process_message(self, message):
-        if self.uuid == message['uuid']:
-            if message['message'] == 'get state':
+    def process_incoming(self, data):
+        if self.uuid == data['uuid']:
+            if data['message'] == 'get state':
                 self.send_device_data_to_server()
 
     def send_device_data_to_server(self):
@@ -112,12 +112,11 @@ class Camera(Device):
     def type(self):
         return 'Camera'
 
-    def process_message(self, message):
-        if self.uuid == message['uuid']:
-            if message.get('action', 0) == 'take image':
-                print('image has been taken')
-                image = self.take_image()
-                self.upload_image_to_google_drive(image)
+    def process_incoming_data(self, data):
+        if data.get('message', 0) == 'take image':
+            print('image has been taken')
+            image = self.take_image()
+            self.upload_image_to_google_drive(image)
 
     def upload_image_to_google_drive(self):
         pass
