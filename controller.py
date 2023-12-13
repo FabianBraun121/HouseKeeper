@@ -25,7 +25,7 @@ class Controller:
 
     def process_device_data(self, device_data):
         print('device data has been received')
-        if any(device_data['uuid'] not in d for d in (self.sensors, self.reactors)):
+        if not (device_data['uuid'] in self.sensors or device_data['uuid'] in self.reactors):
             self.initialize_divice(device_data)
         if device_data['uuid'] in self.sensors:
             with self.sensors_lock:
