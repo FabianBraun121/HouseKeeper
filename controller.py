@@ -40,7 +40,7 @@ class Controller:
     def initialize_divice(self, device_data):
         if device_data['type'] == 'Sensor':
             with self.sensors_lock:
-                device_data.set('state', 0)
+                device_data['state'] = 0
                 self.sensors[device_data['uuid']] = device_data
         else:
             with self.reactors_lock:
