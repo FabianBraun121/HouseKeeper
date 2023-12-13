@@ -115,7 +115,7 @@ class Camera(Device):
             image = self.take_image()
             self.upload_image_to_google_drive(image)
 
-    def upload_image_to_google_drive(self):
+    def upload_image_to_google_drive(self, image):
         pass
 
     def take_image(self):
