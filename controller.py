@@ -24,7 +24,6 @@ class Controller:
         self.communication_server.stop()
 
     def process_device_data(self, device_data):
-        print('device data has been received')
         if not (device_data['uuid'] in self.sensors or device_data['uuid'] in self.reactors):
             self.initialize_divice(device_data)
         if device_data['uuid'] in self.sensors:
@@ -33,17 +32,13 @@ class Controller:
                 current_state = self.sensors.get(uuid).get('state', 0)
 
                 cast_alarm = current_state != 1 and device_data['state'] == 1
-                print(
-                    f'current state {current_state}, device state {device_data["state"]}, cast_alarm {cast_alarm}')
                 self.sensors[uuid] = device_data
 
             if cast_alarm:
-                print('alarm has been cast')
                 threading.Thread(target=self.alarm.alarm(
                     device_data['position'])).start()
 
     def initialize_divice(self, device_data):
-        print('sensors are initialized')
         if device_data['type'] == 'Sensor':
             with self.sensors_lock:
                 device_data['state'] = 0
@@ -51,6 +46,7 @@ class Controller:
         else:
             with self.reactors_lock:
                 self.reactors[device_data['uuid']] = device_data
+        print(f'{device_data["type"]} has been initialized')
 
 
 config = Config()
