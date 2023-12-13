@@ -16,9 +16,11 @@ class Controller:
         self.position_relation = None
 
     def start(self):
+        print('starting the alarm system')
         self.communication_server.start()
 
     def stop(self):
+        print('stoping the alarm system')
         self.communication_server.stop()
 
     def process_sensor_state(self, sensor_data):

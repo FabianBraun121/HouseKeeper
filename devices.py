@@ -15,6 +15,8 @@ class Device(ABC):
         self.uuid = str(uuid.uuid4())
         self.position = position
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.server_address = (self.cfg.get('server_ip'),
+                               self.cfg.get('server_port'))
         self.periodical_initialization()
         threading.Thread(target=self.listen_for_message).start()
 
@@ -39,7 +41,7 @@ class Device(ABC):
         initial_data = {'type': self.type,
                         'uuid': self.uuid, 'position': self.position}
         self.socket.sendto(json.dumps(initial_data).encode(
-            'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('initialization_gate')))
+            'utf-8'), self.server_address)
         threading.Timer(self.cfg.get('periodical_initialization_time'),
                         self.periodical_initialization).start()
 
@@ -78,8 +80,7 @@ class Sensor(Device):
         data_to_send = {'type': self.type, 'uuid': self.uuid, 'state': self.state,
                         'position': self.position, 'sensor type': self.sensor_type}
         json_data = json.dumps(data_to_send)
-        self.socket.sendto(json_data.encode(
-            'utf-8'), (self.cfg.get('central_ip'), self.cfg.get('sensor_gate')))
+        self.socket.sendto(json_data.encode('utf-8'), self.server_address)
 
 
 class IRMovementSensor(Sensor):
