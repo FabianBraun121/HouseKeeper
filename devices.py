@@ -1,3 +1,4 @@
+import os
 from config import Config
 from abc import ABC, abstractmethod, abstractproperty
 import RPi.GPIO as GPIO
@@ -9,6 +10,8 @@ import socket
 
 GPIO.setmode(GPIO.BCM)
 Picamera2.set_logging(Picamera2.ERROR)
+
+os.environ["LIBCAMERA_LOG_LEVELS"] = "3"
 
 
 class Device(ABC):
