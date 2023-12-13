@@ -17,7 +17,9 @@ class Device(ABC):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.server_address = (self.cfg.get('server_ip'),
                                self.cfg.get('server_port'))
-        self.periodical_initialization()
+        self.device_data = {'type': self.type,
+                            'uuid': self.uuid, 'position': self.position}
+        self.periodical_device_data_push()
         threading.Thread(target=self.listen_for_message).start()
 
     @abstractproperty
@@ -37,12 +39,10 @@ class Device(ABC):
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON data: {e}")
 
-    def periodical_initialization(self):
-        initial_data = {'type': self.type,
-                        'uuid': self.uuid, 'position': self.position}
-        self.socket.sendto(json.dumps(initial_data).encode(
+    def periodical_device_data_push(self):
+        self.socket.sendto(json.dumps(self.device_data).encode(
             'utf-8'), self.server_address)
-        threading.Timer(self.cfg.get('periodical_initialization_time'),
+        threading.Timer(self.cfg.get('periodical_device_data_push_time'),
                         self.periodical_initialization).start()
 
 
@@ -50,6 +50,7 @@ class Sensor(Device):
     def __init__(self, config, position):
         super().__init__(config, position)
         self.state = 0
+        self.device_data['state'] = self.state
         threading.Thread(target=self.track_state_change).start()
 
     @property
@@ -67,19 +68,17 @@ class Sensor(Device):
     def track_state_change(self):
         if self.get_sensor_state() != self.state:
             self.state = self.get_sensor_state()
-            self.send_state_to_server()
+            self.send_device_data_to_server()
         threading.Timer(self.cfg.get('sensor_sleep_time'),
                         self.track_state_change).start()
 
     def process_message(self, message):
         if self.uuid == message['uuid']:
             if message['message'] == 'get state':
-                self.send_state_to_server()
+                self.send_device_data_to_server()
 
-    def send_state_to_server(self):
-        data_to_send = {'type': self.type, 'uuid': self.uuid, 'state': self.state,
-                        'position': self.position, 'sensor type': self.sensor_type}
-        json_data = json.dumps(data_to_send)
+    def send_device_data_to_server(self):
+        json_data = json.dumps(self.device_data)
         self.socket.sendto(json_data.encode('utf-8'), self.server_address)
 
 
@@ -94,7 +93,9 @@ class IRMovementSensor(Sensor):
 
     @property
     def sensor_type(self):
-        return "IR Movement Sensor"
+        sensor_type = "IR Movement Sensor"
+        self.device_data['sensor_type'] = sensor_type
+        return sensor_type
 
 
 class Camera(Device):

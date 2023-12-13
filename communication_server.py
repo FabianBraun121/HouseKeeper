@@ -25,10 +25,8 @@ class CommunicationServer:
                 data = json.loads(data.decode('utf-8'))
                 data['address'] = address
                 message_type = data['message']
-                if message_type == self.controller.cfg.get('sensor_state_message'):
-                    self.controller.process_sensor_state(data)
-                elif message_type == self.controller.cfg.get('initialize_device_message'):
-                    self.controller.initialize_divice(data)
+                if message_type == self.controller.cfg.get('device_data'):
+                    self.controller.process_device_data(data)
                 else:
                     raise ValueError(f"Unknown message type {message_type}")
 

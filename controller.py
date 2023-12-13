@@ -23,26 +23,28 @@ class Controller:
         print('stoping the alarm system')
         self.communication_server.stop()
 
-    def process_sensor_state(self, sensor_data):
-        with self.sensors_lock:
-            uuid = sensor_data['uuid']
-            current_state = self.sensors.get(uuid, {}).get('state', 0)
+    def process_device_data(self, device_data):
+        if any(device_data['uuid'] not in d for d in (self.sensors, self.reactors)):
+            self.initialize_divice(device_data)
+        if device_data['uuid'] in self.sensors:
+            with self.sensors_lock:
+                uuid = device_data['uuid']
+                current_state = self.sensors.get(uuid).get('state', 0)
 
-            if current_state != 1 and sensor_data['state'] == 1:
-                threading.Thread(target=self.alarm.alarm(
-                    sensor_data['position'])).start()
+                if current_state != 1 and device_data['state'] == 1:
+                    threading.Thread(target=self.alarm.alarm(
+                        device_data['position'])).start()
 
-            self.sensors[uuid] = sensor_data
+                self.sensors[uuid] = device_data
 
     def initialize_divice(self, device_data):
         if device_data['type'] == 'Sensor':
-            if device_data['uuid'] not in self.sensors:
-                with self.sensors_lock:
-                    self.sensors[device_data['uuid']] = device_data
+            with self.sensors_lock:
+                device_data.set('state', 0)
+                self.sensors[device_data['uuid']] = device_data
         else:
-            if device_data['uuid'] not in self.reactors:
-                with self.reactors_lock:
-                    self.reactors[device_data['uuid']] = device_data
+            with self.reactors_lock:
+                self.reactors[device_data['uuid']] = device_data
 
 
 config = Config()
