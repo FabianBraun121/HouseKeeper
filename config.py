@@ -21,6 +21,8 @@ class Config:
                 self.config = json.load(file)
         except FileNotFoundError:
             self.config = DEFAULT_CONFIG
+        with open('secret_config.json', 'r') as file:
+            self.config.update(json.load(file))
 
     def save_config(self):
         with open('config.json', 'w') as file:
