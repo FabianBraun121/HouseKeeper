@@ -118,7 +118,7 @@ class Camera(Device):
 
     def process_incoming_data(self, data):
         if data.get('message', 0) == self.cfg.get('take_images_message'):
-            for _ in data.get('num_images'):
+            for _ in range(data.get('num_images')):
                 self.take_image()
                 sleep(1/data.get('image_freq'))
         else:
