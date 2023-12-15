@@ -35,7 +35,7 @@ class RemoteServerClient():
             endpoint_url=self.cfg.get('endpoint'),
             aws_access_key_id=self.cfg.get('key_id'),
             aws_secret_access_key=self.cfg.get('application_key'),
-            config={'signature_version': 's3v4'}
+            config=Config(signature_version='s3v4')
         )
     
     def delete_old_files(self, days_threshold):
