@@ -2,7 +2,7 @@
 import boto3  # REQUIRED! - Details here: https://pypi.org/project/boto3/
 from botocore.exceptions import ClientError
 from botocore.config import Config
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 
 class RemoteServerClient():
@@ -18,9 +18,9 @@ class RemoteServerClient():
         self.delete_old_files(self.cfg.get('delete_images_after_n_days'))
 
     def delete_old_files(self, days_threshold):
-         threshold_date = datetime.now() - timedelta(days=days_threshold)
+         threshold_date = datetime.now().replace(tzinfo=timezone.utc) - timedelta(days=days_threshold)
          for obj in self.b2.Bucket(self.cfg.get('bucket')).objects.all():
-            last_modified = obj.last_modified
+            last_modified = obj.last_modified.replace(tzinfo=timezone.utc)
             if last_modified < threshold_date:
                 object_key = obj.key
                 print(f'Deleting object: {object_key}')
