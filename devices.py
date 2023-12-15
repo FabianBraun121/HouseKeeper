@@ -125,7 +125,7 @@ class Camera(Device):
             raise ValueError("Invalid message value")
 
     def take_image(self):
-        self.picam.start_and_capture_file(
+        self.picam2.start_and_capture_file(
             self.image_fname, delay=0, show_preview=False)
         time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         server_fname = f'{self.device_data.get("position")}/{self.device_data.get("uuid")}/{time_str}'
