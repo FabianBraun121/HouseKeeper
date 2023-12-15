@@ -2,6 +2,8 @@
 import boto3  # REQUIRED! - Details here: https://pypi.org/project/boto3/
 from botocore.exceptions import ClientError
 from botocore.config import Config
+from boto3.s3.transfer import TransferConfig
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 
@@ -17,6 +19,16 @@ class RemoteServerClient():
                     ))
         self.delete_old_files(self.cfg.get('delete_images_after_n_days'))
 
+
+    def create_boto_resource(self):
+        return boto3.resource(
+            service_name='s3',
+            endpoint_url=self.cfg.get('endpoint'),
+            aws_access_key_id=self.cfg.get('key_id'),
+            aws_secret_access_key=self.cfg.get('application_key'),
+            config=TransferConfig(multipart_threshold=1024 * 25, max_concurrency=10,
+                                  multipart_chunksize=1024 * 25, use_threads=True)
+        )
     def delete_old_files(self, days_threshold):
          threshold_date = datetime.now().replace(tzinfo=timezone.utc) - timedelta(days=days_threshold)
          for obj in self.b2.Bucket(self.cfg.get('bucket')).objects.all():
@@ -54,6 +66,14 @@ class RemoteServerClient():
         if b2fname is None:
             b2fname = fname
         try:
-            self.b2.Bucket(self.cfg.get('bucket')).upload_file(fname, b2fname)
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                executor.submit(self._upload_file, fname, b2fname).result()
+        except Exception as e:
+            print('Error uploading file:', e)
+
+    def _upload_file(self, fname, b2fname):
+        b2 = self.create_boto_resource()
+        try:
+            b2.Bucket(self.cfg.get('bucket')).upload_file(fname, b2fname)
         except ClientError as ce:
-            print('error', ce) 
+            print('Error:', ce)
