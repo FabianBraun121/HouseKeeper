@@ -13,9 +13,8 @@ class Alarm:
     def take_images(self, position):
         available_cameras = [c for c in self.controller.reactors.values(
         ) if c['position'] == position and c['type'] == 'Camera']
-        for _ in range(self.controller.cfg.get('alarm_num_images')):
-            for camera in available_cameras:
-                data = {'uuid': camera["uuid"], 'message': self.controller.cfg.get(
-                    'take_image_message')}
-                self.socket_server.send_data_to(data, camera['address'])
-            time.sleep(1)
+        for camera in available_cameras:
+            data = {'uuid': camera["uuid"], 'message': self.controller.cfg.get(
+                'take_images_message'), 'num_images': self.controller.cfg.get('alarm_num_images'),
+                'image_freq': self.controller.cfg.get('alarm_image_freq')}
+            self.socket_server.send_data_to(data, camera['address'])

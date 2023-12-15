@@ -3,12 +3,13 @@ from config import Config
 from remote_server_client import RemoteServerClient
 from abc import ABC, abstractmethod, abstractproperty
 import RPi.GPIO as GPIO
-from picamera2 import Picamera2
+from picamera import Picamera
 import uuid
 import threading
 import json
 import socket
 from datetime import datetime
+from time import sleep
 
 GPIO.setmode(GPIO.BCM)
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3"
@@ -105,7 +106,7 @@ class Camera(Device):
         super().__init__(config, position)
         self.image_fname = "img.jpg"
         self.remote_server_client = remote_server_client
-        self.picam2 = Picamera2()
+        self.picam = Picamera()
 
     @property
     def gate(self):
@@ -116,8 +117,12 @@ class Camera(Device):
         return 'Camera'
 
     def process_incoming_data(self, data):
-        if data.get('message', 0) == self.cfg.get('take_image_message'):
-            self.take_image()
+        if data.get('message', 0) == self.cfg.get('take_images_message'):
+            self.picam.start_preview()
+            sleep(0.5)
+            for _ in data.get('num_images'):
+                self.take_image()
+                sleep(1/data.get('image_freq'))
         else:
             raise ValueError("Invalid message value")
 
