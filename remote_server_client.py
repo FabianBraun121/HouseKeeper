@@ -8,7 +8,6 @@ import threading
 from datetime import datetime, timedelta, timezone
 
 class UploadThread(threading.Thread):
-    terminate = False
     def __init__(self, client, fname, b2fname):
         super().__init__()
         self.client = client
@@ -17,12 +16,7 @@ class UploadThread(threading.Thread):
     
     def run(self):
         b2 = self.client.create_boto_resource()
-        while not self.terminate:
-            b2.Bucket(self.client.cfg.get('bucket')).upload_file(self.fname, self.b2fname)
-
-    def stop(self):
-        self.terminate = True
-        print('stop is called')
+        b2.Bucket(self.client.cfg.get('bucket')).upload_file(self.fname, self.b2fname)
 
 
 class RemoteServerClient():
