@@ -1,9 +1,9 @@
 import os
+from picamera2 import Picamera2
 from config import Config
 from remote_server_client import RemoteServerClient
 from abc import ABC, abstractmethod, abstractproperty
 import RPi.GPIO as GPIO
-from picamera2 import Picamera2
 import uuid
 import threading
 import json

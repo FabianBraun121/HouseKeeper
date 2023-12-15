@@ -11,4 +11,3 @@ source venv/bin/activate
 
 pip install boto3
 pip install RPi.GPIO
-pip install picamera2
