@@ -19,16 +19,6 @@ class RemoteServerClient():
                     ))
         self.delete_old_files(self.cfg.get('delete_images_after_n_days'))
 
-
-    def create_boto_resource(self):
-        return boto3.resource(
-            service_name='s3',
-            endpoint_url=self.cfg.get('endpoint'),
-            aws_access_key_id=self.cfg.get('key_id'),
-            aws_secret_access_key=self.cfg.get('application_key'),
-            config=TransferConfig(multipart_threshold=1024 * 25, max_concurrency=10,
-                                  multipart_chunksize=1024 * 25, use_threads=True)
-        )
     def delete_old_files(self, days_threshold):
          threshold_date = datetime.now().replace(tzinfo=timezone.utc) - timedelta(days=days_threshold)
          for obj in self.b2.Bucket(self.cfg.get('bucket')).objects.all():
@@ -68,13 +58,19 @@ class RemoteServerClient():
         try:
             with ThreadPoolExecutor(max_workers=1) as executor:
                 future = executor.submit(self._upload_file, fname, b2fname)
-                future.result()
+                return future.result()  # Ensure the task is completed before continuing
         except Exception as e:
             print('Error uploading file:', e)
 
     def _upload_file(self, fname, b2fname):
-        b2 = self.create_boto_resource()
         try:
+            b2 = boto3.resource(
+                service_name='s3',
+                endpoint_url=self.cfg.get('endpoint'),
+                aws_access_key_id=self.cfg.get('key_id'),
+                aws_secret_access_key=self.cfg.get('application_key'),
+                config={'signature_version': 's3v4'}
+            )
             b2.Bucket(self.cfg.get('bucket')).upload_file(fname, b2fname)
-        except ClientError as ce:
-            print('Error:', ce)
+        except Exception as e:
+            print('Error uploading file:', e)
