@@ -67,7 +67,8 @@ class RemoteServerClient():
             b2fname = fname
         try:
             with ThreadPoolExecutor(max_workers=1) as executor:
-                executor.submit(self._upload_file, fname, b2fname).result()
+                future = executor.submit(self._upload_file, fname, b2fname)
+                future.result()
         except Exception as e:
             print('Error uploading file:', e)
 
