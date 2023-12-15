@@ -118,8 +118,6 @@ class Camera(Device):
 
     def process_incoming_data(self, data):
         if data.get('message', 0) == self.cfg.get('take_images_message'):
-            self.picam.start_preview()
-            sleep(0.5)
             for _ in data.get('num_images'):
                 self.take_image()
                 sleep(1/data.get('image_freq'))
@@ -127,8 +125,7 @@ class Camera(Device):
             raise ValueError("Invalid message value")
 
     def take_image(self):
-        self.picam2.start_and_capture_file(
-            self.image_fname, delay=0, show_preview=False)
+        self.picam.capture(self.image_fname)
         time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         server_fname = f'{self.device_data.get("position")}/{self.device_data.get("uuid")}/{time_str}'
         self.remote_server_client.upload_file(self.image_fname, server_fname)

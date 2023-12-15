@@ -1,6 +1,3 @@
-import time
-
-
 class Alarm:
     def __init__(self, controller, socket_server):
         self.controller = controller
