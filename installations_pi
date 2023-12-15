@@ -1,13 +1,15 @@
 sudo apt update
-sudo apt upgrade
-# sudo apt install python3-picamera2
+sudo apt -y upgrade
+sudo apt-get install -y libpcap-dev python3-libcamera
+# sudo apt install -y picamera2
 
 cd Documents/
 git clone https://github.com/FabianBraun121/HouseKeeper.git
 cd HouseKeeper/
 
-python3 -m venv venv
+python3 -m venv --system-site-packages venv
 source venv/bin/activate
 
+pip install --upgrade pip
 pip install boto3
-pip install RPi.GPIO
+# pip install RPi.GPIO

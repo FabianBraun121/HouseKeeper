@@ -133,6 +133,6 @@ class Camera(Device):
 
 
 config = Config()
-remote_server_client = RemoteServerClient()
+remote_server_client = RemoteServerClient(config)
 sensor = IRMovementSensor(config, 'Living room', 18)
 camera = Camera(config, 'Living room')
