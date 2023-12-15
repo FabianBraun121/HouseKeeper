@@ -3,7 +3,7 @@ import threading
 import json
 
 
-class CommunicationServer:
+class SocketServer:
     def __init__(self, controller):
         self.controller = controller
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

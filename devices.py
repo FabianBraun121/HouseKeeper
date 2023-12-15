@@ -1,5 +1,6 @@
 import os
 from config import Config
+from remote_server_client import RemoteServerClient
 from abc import ABC, abstractmethod, abstractproperty
 import RPi.GPIO as GPIO
 from picamera2 import Picamera2
@@ -7,6 +8,7 @@ import uuid
 import threading
 import json
 import socket
+from datetime import datetime
 
 GPIO.setmode(GPIO.BCM)
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3"
@@ -99,9 +101,10 @@ class IRMovementSensor(Sensor):
 
 
 class Camera(Device):
-    def __init__(self, config, position):
+    def __init__(self, config, position, remote_server_client):
         super().__init__(config, position)
         self.image_fname = "img.jpg"
+        self.remote_server_client = remote_server_client
         self.picam2 = Picamera2()
 
     @property
@@ -114,21 +117,18 @@ class Camera(Device):
 
     def process_incoming_data(self, data):
         if data.get('message', 0) == self.cfg.get('take_image_message'):
-            print('image has been taken')
-            image = self.take_image()
-            self.upload_image_to_google_drive(image)
-
-    def upload_image_to_google_drive(self, image):
-        pass
+            self.take_image()
+        else:
+            raise ValueError("Invalid message value")
 
     def take_image(self):
         self.picam2.start_and_capture_file(
             self.image_fname, delay=0, show_preview=False)
-        with open(self.image_fname, 'rb') as file:
-            image = file.read()
-        return image
-
+        time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        server_fname = f'{self.device_data.get("position")}/{self.device_data.get("uuid")}/{time_str}'
+        self.remote_server_client.upload_file(self.image_fname, server_fname)
 
 config = Config()
+remote_server_client = RemoteServerClient()
 sensor = IRMovementSensor(config, 'Living room', 18)
 camera = Camera(config, 'Living room')

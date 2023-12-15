@@ -8,6 +8,7 @@ DEFAULT_CONFIG = {
     "periodical_device_data_push_time": 10,
     "sensor_sleep_time": 0.5,
     "alarm_num_images": 5,
+    "delete_images_after_n_days": 1,
 }
 
 

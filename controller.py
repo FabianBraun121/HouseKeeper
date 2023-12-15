@@ -1,6 +1,6 @@
 import threading
 from config import Config
-from communication_server import CommunicationServer
+from socket_server import SocketServer
 from alarm import Alarm
 
 
@@ -11,17 +11,17 @@ class Controller:
         self.sensors_lock = threading.Lock()
         self.reactors = {}
         self.reactors_lock = threading.Lock()
-        self.communication_server = CommunicationServer(self)
-        self.alarm = Alarm(self, self.communication_server)
+        self.socket_server = SocketServer(self)
+        self.alarm = Alarm(self, self.socket_server)
         self.position_relation = None
 
     def start(self):
         print('starting the alarm system')
-        self.communication_server.start()
+        self.socket_server.start()
 
     def stop(self):
         print('stoping the alarm system')
-        self.communication_server.stop()
+        self.socket_server.stop()
 
     def process_device_data(self, device_data):
         if not (device_data['uuid'] in self.sensors or device_data['uuid'] in self.reactors):
