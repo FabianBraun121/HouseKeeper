@@ -39,7 +39,7 @@ class Device(ABC):
             data, _ = self.socket.recvfrom(1024)
             try:
                 data = json.loads(data.decode('utf-8'))
-                threading.Thread(target=self.process_incoming_data, args=(data,)).start()
+                self.process_incoming_data(data)
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON data: {e}")
 
@@ -107,6 +107,7 @@ class Camera(Device):
         self.image_fname = "img.jpg"
         self.remote_server_client = remote_server_client
         self.picam2 = Picamera2()
+        self.camera_lock = threading.Lock()
 
     @property
     def gate(self):
@@ -117,12 +118,14 @@ class Camera(Device):
         return 'Camera'
 
     def process_incoming_data(self, data):
-        if data.get('message', 0) == self.cfg.get('take_images_message'):
-            for _ in range(data.get('num_images')):
-                self.take_image()
-                sleep(1/data.get('image_freq'))
-        else:
-            raise ValueError("Invalid message value")
+        if not self.camera_lock.locked():
+            with self.camera_lock:
+                if data.get('message', 0) == self.cfg.get('take_images_message'):
+                    for _ in range(data.get('num_images')):
+                        self.take_image()
+                        sleep(1/data.get('image_freq'))
+                else:
+                    raise ValueError("Invalid message value")
 
     def take_image(self):
         self.picam2.start_and_capture_file(
