@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 class UploadThread(threading.Thread):
     terminate = False
     def __init__(self, client, fname, b2fname):
+        super().__init__()
         self.client = client
         self.fname = fname
         self.b2fname = b2fname
