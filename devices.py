@@ -39,7 +39,7 @@ class Device(ABC):
             data, _ = self.socket.recvfrom(1024)
             try:
                 data = json.loads(data.decode('utf-8'))
-                self.process_incoming_data(data)
+                threading.Thread(target=self.process_incoming_data, args=(data,)).start()
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON data: {e}")
 
