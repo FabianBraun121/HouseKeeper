@@ -75,7 +75,8 @@ class RemoteServerClient():
         if b2fname is None:
             b2fname = fname
         try:
-            thread = UploadThread(self, fname, b2fname).start()
+            thread = UploadThread(self, fname, b2fname)
+            thread.start()
             thread.join()
         except Exception as e:
             print('Error uploading file:', e)
