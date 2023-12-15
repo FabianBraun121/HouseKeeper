@@ -44,6 +44,7 @@ class Device(ABC):
                 print(f"Error decoding JSON data: {e}")
 
     def periodical_device_data_push(self):
+        print("Number of active threads:", threading.active_count())
         self.socket.sendto(json.dumps(self.device_data).encode(
             'utf-8'), self.server_address)
         threading.Timer(self.cfg.get('periodical_device_data_push_time'),
