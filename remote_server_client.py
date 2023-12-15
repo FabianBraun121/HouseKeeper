@@ -22,6 +22,7 @@ class UploadThread(threading.Thread):
 
     def stop(self):
         self.terminate = True
+        print('stop is called')
 
 
 class RemoteServerClient():
