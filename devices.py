@@ -3,7 +3,7 @@ from config import Config
 from remote_server_client import RemoteServerClient
 from abc import ABC, abstractmethod, abstractproperty
 import RPi.GPIO as GPIO
-from picamera import Picamera
+from picamera2 import Picamera2
 import uuid
 import threading
 import json
@@ -106,7 +106,7 @@ class Camera(Device):
         super().__init__(config, position)
         self.image_fname = "img.jpg"
         self.remote_server_client = remote_server_client
-        self.picam = Picamera()
+        self.picam2 = Picamera2()
 
     @property
     def gate(self):
@@ -125,10 +125,12 @@ class Camera(Device):
             raise ValueError("Invalid message value")
 
     def take_image(self):
-        self.picam.capture(self.image_fname)
+        self.picam.start_and_capture_file(
+            self.image_fname, delay=0, show_preview=False)
         time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         server_fname = f'{self.device_data.get("position")}/{self.device_data.get("uuid")}/{time_str}'
         self.remote_server_client.upload_file(self.image_fname, server_fname)
+
 
 config = Config()
 remote_server_client = RemoteServerClient()

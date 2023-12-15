@@ -1,6 +1,14 @@
+sudo apt update
+sudo apt upgrade
+# sudo apt install python3-picamera2
+
+cd Documents/
+git clone https://github.com/FabianBraun121/HouseKeeper.git
+cd HouseKeeper/
+
 python3 -m venv venv
 source venv/bin/activate
 
 pip install boto3
 pip install RPi.GPIO
-pip install picamera
+pip install picamera2
