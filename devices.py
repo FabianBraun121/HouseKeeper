@@ -132,6 +132,7 @@ class Camera(Device):
             self.image_fname, delay=0, show_preview=False)
         time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         server_fname = f'{self.device_data.get("position")}/{self.device_data.get("uuid")}/{time_str}'
+        print(server_fname)
         self.remote_server_client.upload_file(self.image_fname, server_fname)
 
 
