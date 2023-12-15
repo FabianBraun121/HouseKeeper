@@ -125,6 +125,7 @@ class Camera(Device):
                     for _ in range(data.get('num_images')):
                         self.take_image()
                         sleep(1/data.get('image_freq'))
+                        print("Number of active threads:", threading.active_count())
                 else:
                     raise ValueError("Invalid message value")
 
