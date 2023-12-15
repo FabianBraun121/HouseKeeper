@@ -118,6 +118,7 @@ class Camera(Device):
         return 'Camera'
 
     def process_incoming_data(self, data):
+        print("Number of active threads:", threading.active_count())
         if not self.camera_lock.locked():
             with self.camera_lock:
                 if data.get('message', 0) == self.cfg.get('take_images_message'):
