@@ -134,7 +134,7 @@ class Camera(Device):
         server_fname = f'{self.device_data.get("position")}/{self.device_data.get("uuid")}/{time_str}'
         print(server_fname)
         self.remote_server_client.upload_file(self.image_fname, server_fname)
-        sleep(0.1)
+        sleep(10)
 
 
 config = Config()
