@@ -49,6 +49,7 @@ class Device(ABC):
             'utf-8'), self.server_address)
         threading.Timer(self.cfg.get('periodical_device_data_push_time'),
                         self.periodical_device_data_push).start()
+        print("Number of active threads:", threading.active_count())
 
 
 class Sensor(Device):
