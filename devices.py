@@ -44,12 +44,10 @@ class Device(ABC):
                 print(f"Error decoding JSON data: {e}")
 
     def periodical_device_data_push(self):
-        print("Number of active threads:", threading.active_count())
         self.socket.sendto(json.dumps(self.device_data).encode(
             'utf-8'), self.server_address)
         threading.Timer(self.cfg.get('periodical_device_data_push_time'),
                         self.periodical_device_data_push).start()
-        print("Number of active threads:", threading.active_count())
 
 
 class Sensor(Device):
@@ -120,14 +118,12 @@ class Camera(Device):
         return 'Camera'
 
     def process_incoming_data(self, data):
-        print("Number of active threads:", threading.active_count())
         if not self.camera_lock.locked():
             with self.camera_lock:
                 if data.get('message', 0) == self.cfg.get('take_images_message'):
                     for _ in range(data.get('num_images')):
                         self.take_image()
                         sleep(1/data.get('image_freq'))
-                        print("Number of active threads:", threading.active_count())
                 else:
                     raise ValueError("Invalid message value")
 
@@ -141,5 +137,5 @@ class Camera(Device):
 
 config = Config()
 remote_server_client = RemoteServerClient(config)
-#sensor = IRMovementSensor(config, 'Living room', 18)
+sensor = IRMovementSensor(config, 'Living room', 18)
 camera = Camera(config, 'Living room', remote_server_client)

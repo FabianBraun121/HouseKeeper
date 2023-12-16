@@ -7,17 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 import threading
 from datetime import datetime, timedelta, timezone
 
-class UploadThread(threading.Thread):
-    def __init__(self, client, fname, b2fname):
-        super().__init__()
-        self.client = client
-        self.fname = fname
-        self.b2fname = b2fname
-    
-    def run(self):
-        b2 = self.client.create_boto_resource()
-        b2.Bucket(self.client.cfg.get('bucket')).upload_file(self.fname, self.b2fname)
-
 
 class RemoteServerClient():
     def __init__(self, config):
@@ -33,10 +22,11 @@ class RemoteServerClient():
             aws_secret_access_key=self.cfg.get('application_key'),
             config=Config(signature_version='s3v4')
         )
-    
+
     def delete_old_files(self, days_threshold):
-         threshold_date = datetime.now().replace(tzinfo=timezone.utc) - timedelta(days=days_threshold)
-         for obj in self.b2.Bucket(self.cfg.get('bucket')).objects.all():
+        threshold_date = datetime.now().replace(tzinfo=timezone.utc) - \
+            timedelta(days=days_threshold)
+        for obj in self.b2.Bucket(self.cfg.get('bucket')).objects.all():
             last_modified = obj.last_modified.replace(tzinfo=timezone.utc)
             if last_modified < threshold_date:
                 object_key = obj.key
@@ -45,13 +35,15 @@ class RemoteServerClient():
 
     def download_file(self, key_name, local_fname):
         try:
-            self.b2.Bucket(self.cfg.get('bucket')).download_file(key_name, local_fname)
+            self.b2.Bucket(self.cfg.get('bucket')).download_file(
+                key_name, local_fname)
         except ClientError as ce:
             print('error', ce)
 
     def get_file(self, key_name):
         try:
-            response = self.b2.get_object(Bucket=self.cfg.get('bucket'), Key=key_name)
+            response = self.b2.get_object(
+                Bucket=self.cfg.get('bucket'), Key=key_name)
             return response['Body'].read()
         except ClientError as ce:
             print('error', ce)
@@ -71,8 +63,13 @@ class RemoteServerClient():
         if b2fname is None:
             b2fname = fname
         try:
-            thread = UploadThread(self, fname, b2fname)
+            thread = threading.Thread(
+                target=self._upload_file, args=(fname, b2fname))
             thread.start()
             thread.join()
         except Exception as e:
             print('Error uploading file:', e)
+
+    def _upload_file(self, fname, b2fname):
+        b2 = self.create_boto_resource()
+        b2.Bucket(self.cfg.get('bucket')).upload_file(fname, b2fname)
