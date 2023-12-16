@@ -24,7 +24,7 @@ class Device(ABC):
         self.device_data = {'type': self.type, 'uuid': str(uuid.uuid4()),
                             'position': position, 'message': self.cfg.get('device_data_message')}
         self.periodical_device_data_push()
-        threading.Thread(target=self.listen_for_incoming_data).start()
+        #threading.Thread(target=self.listen_for_incoming_data).start()
 
     @abstractproperty
     def type(self):
