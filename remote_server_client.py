@@ -6,6 +6,7 @@ from boto3.s3.transfer import TransferConfig
 from concurrent.futures import ThreadPoolExecutor
 import threading
 from datetime import datetime, timedelta, timezone
+import time
 
 
 class RemoteServerClient():
@@ -90,3 +91,4 @@ class RemoteServerClient():
     def _upload_file(self, fname, b2fname):
         b2 = self.create_boto_resource()
         b2.Bucket(self.cfg.get('bucket')).upload_file(fname, b2fname)
+        time.sleep(15)
