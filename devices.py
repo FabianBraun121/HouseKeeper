@@ -55,7 +55,7 @@ class Sensor(Device):
     def __init__(self, config, position):
         super().__init__(config, position)
         self.device_data['state'] = 0
-        threading.Thread(target=self.track_state_change).start()
+        self.track_state_change()
 
     @property
     def type(self):
