@@ -59,14 +59,31 @@ class RemoteServerClient():
         except ClientError as ce:
             print('error', ce)
 
+#    def upload_file(self, fname, b2fname=None):
+#        if b2fname is None:
+#            b2fname = fname
+#        try:
+#            thread = threading.Thread(
+#                target=self._upload_file, args=(fname, b2fname))
+#            thread.start()
+#            thread.join()
+#        except Exception as e:
+#            print('Error uploading file:', e)
+#
+#    def _upload_file(self, fname, b2fname):
+#        b2 = self.create_boto_resource()
+#        b2.Bucket(self.cfg.get('bucket')).upload_file(fname, b2fname)
+#
+#
     def upload_file(self, fname, b2fname=None):
         if b2fname is None:
             b2fname = fname
+
         try:
-            thread = threading.Thread(
-                target=self._upload_file, args=(fname, b2fname))
-            thread.start()
-            thread.join()
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(self._upload_file, fname, b2fname)
+                # Wait for the future to complete (upload to finish)
+                future.result()
         except Exception as e:
             print('Error uploading file:', e)
 
