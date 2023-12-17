@@ -1,5 +1,11 @@
 sudo apt update
 sudo apt -y upgrade
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+ sudo usermod -aG docker pi
+
+sudo apt update
+sudo apt -y upgrade
 sudo apt-get install -y libpcap-dev python3-libcamera
 # sudo apt install -y picamera2
 

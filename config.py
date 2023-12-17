@@ -7,7 +7,7 @@ DEFAULT_CONFIG = {
     "take_images_message": "take images",
     "periodical_device_data_push_time": 10,
     "sensor_sleep_time": 0.5,
-    "alarm_num_images": 5,
+    "alarm_num_images": 3,
     "alarm_image_freq": 1,
     "delete_images_after_n_days": 1,
 }
