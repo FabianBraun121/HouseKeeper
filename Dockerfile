@@ -1,5 +1,5 @@
 # Use an official base image for Raspberry Pi with Python
-FROM balenalib/raspberrypi4-64-debian-python:3.10.7
+FROM balenalib/raspberrypi4-64-debian-python:3.9.14
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y libpcap-dev python3-libcamera python3-picamera2
