@@ -1,7 +1,7 @@
 import threading
 from config import Config
 from socket_server import SocketServer
-from alarm import Alarm
+from base_container.alarm import Alarm
 
 
 class Controller:

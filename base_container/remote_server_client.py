@@ -2,11 +2,7 @@
 import boto3  # REQUIRED! - Details here: https://pypi.org/project/boto3/
 from botocore.exceptions import ClientError
 from botocore.config import Config
-from boto3.s3.transfer import TransferConfig
-from concurrent.futures import ThreadPoolExecutor
-import threading
 from datetime import datetime, timedelta, timezone
-import time
 import boto3.session
 
 

@@ -1,0 +1,3 @@
+Controller
+IR_Movement_Sensor 'Living room' 18
+Camera 'Living room'

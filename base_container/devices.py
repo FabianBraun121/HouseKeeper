@@ -1,7 +1,5 @@
 import os
 from picamera2 import Picamera2
-from config import Config
-from remote_server_client import RemoteServerClient
 from abc import ABC, abstractmethod, abstractproperty
 import RPi.GPIO as GPIO
 import uuid
@@ -134,8 +132,3 @@ class Camera(Device):
         server_fname = f'{self.device_data.get("position")}/{self.device_data.get("uuid")}/{time_str}'
         print(server_fname)
         self.remote_server_client.upload_file(self.image_fname, server_fname)
-
-config = Config()
-remote_server_client = RemoteServerClient(config)
-sensor = IRMovementSensor(config, 'Living room', 18)
-camera = Camera(config, 'Living room', remote_server_client)
