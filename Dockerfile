@@ -7,8 +7,9 @@ RUN apt-get update && apt-get install -y libpcap-dev python3-libcamera python3-p
 # Install Python dependencies
 WORKDIR /app
 COPY requirements.txt .
-RUN python3 -m venv --system-site-packages venv
-RUN . venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
+# RUN python3 -m venv --system-site-packages venv
+# RUN . venv/bin/activate && 
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Clone the project from GitHub
 RUN apt-get install -y git
