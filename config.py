@@ -1,7 +1,7 @@
 import json
 
 DEFAULT_CONFIG = {
-    "server_ip": "192.168.1.134",
+    "server_ip": "192.168.178.38",
     "server_port": 50001,
     "device_data_message": "device data",
     "take_images_message": "take images",

@@ -2,7 +2,7 @@
 FROM balenalib/raspberrypi4-64-debian-python:3.9.14
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y libpcap-dev python3-libcamera python3-picamera2
+RUN apt update && apt install -y libpcap-dev python3-libcamera python3-picamera2 python3-rpi.gpio && apt upgrade
 
 # Install Python dependencies
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Clone the project from GitHub
-RUN apt-get install -y git
+RUN apt install -y git
 RUN mkdir /app/Documents
 RUN cd /app/Documents && git clone https://github.com/FabianBraun121/HouseKeeper.git
 
