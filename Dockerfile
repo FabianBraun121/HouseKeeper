@@ -2,7 +2,7 @@
 FROM balenalib/raspberrypi4-64-debian-python:3.10.7
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y python3-picamera2 libpcap-dev python3-libcamera
+RUN apt-get update && apt-get install -y libpcap-dev python3-libcamera python3-picamera2
 
 # Install Python dependencies
 WORKDIR /app
