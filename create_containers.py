@@ -7,7 +7,7 @@ def create_container(component, line, *args):
     # Generate Dockerfile content
     dockerfile_content = f'''
 FROM fabianbraun121/housekeeper:latest
-CMD ["python", "base_container/run_{component.lower()}.py", {", ".join(map(repr, args))}]
+CMD ["python3", "base_container/run_{component.lower()}.py", {", ".join(map(repr, args))}]
 '''
 
     # Write Dockerfile to disk
@@ -21,8 +21,8 @@ CMD ["python", "base_container/run_{component.lower()}.py", {", ".join(map(repr,
     ])
     subprocess.run([
         "docker", "run", "--rm", "--network", "host",
-        "-v", "/home/pi/Documents/HouseKeeper/base_container/secret_config.json:/app/Documents/HouseKeeper/base_container/secret_config.json",
-        "--privileged", "--env", "UDEV=1",
+        "-v", "/home/pi/Documents/HouseKeeper/secret_config.json:/app/Documents/HouseKeeper/secret_config.json",
+        "-e", "UDEV=1",
         f"--name={component.lower()}-container{line}", f"{component.lower()}-image{line}"
     ])
 

@@ -4,7 +4,7 @@ import sys
 
 def main(position, pin):
     config = Config()
-    IRMovementSensor(config, position, pin)
+    IRMovementSensor(config, str(position), int(pin))
 
 if __name__ == '__main__':
     args = sys.argv[1:]

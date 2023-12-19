@@ -6,7 +6,7 @@ import sys
 def main(position):
     config = Config()
     remote_server_client = RemoteServerClient(config)
-    Camera(config, position, remote_server_client)
+    Camera(config, str(position), remote_server_client)
 
 if __name__ == '__main__':
     args = sys.argv[1:]

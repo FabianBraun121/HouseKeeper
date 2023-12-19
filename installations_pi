@@ -21,4 +21,4 @@ pip install boto3
 # pip install RPi.GPIO
 
 
-Docker execution flags -> -it --rm --network host -v ~/Documents/HouseKeeper/secret_config.json:/app/Documents/HouseKeeper/secret_config.json --privileged --env UDEV=1
+Docker execution flags -> -it --rm --network host -v ~/Documents/HouseKeeper/secret_config.json:/app/Documents/HouseKeeper/secret_config.json --privileged -e UDEV=1
