@@ -20,7 +20,7 @@ CMD ["python3", "base_container/run_{component.lower()}.py", {", ".join(map(repr
         "docker", "build", "-t", f"{component.lower()}-image{line}", "-f", dockerfile_path, "./dockerfiles"
     ])
     subprocess.run([
-        "docker", "run", "--rm", "--network", "host", "--privileged"
+        "docker", "run", "--rm", "--network", "host", "--privileged", 
         "-v", "/home/pi/Documents/HouseKeeper/secret_config.json:/app/Documents/HouseKeeper/secret_config.json",
         "-e", "UDEV=1",
         f"--name={component.lower()}-container{line}", f"{component.lower()}-image{line}"
