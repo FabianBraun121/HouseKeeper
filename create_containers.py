@@ -1,10 +1,13 @@
 import subprocess
+import re
+import os
+
 
 def create_container(component, line, *args):
     # Generate Dockerfile content
     dockerfile_content = f'''
 FROM fabianbraun121/housekeeper:latest
-CMD ["python", "base_container/run_{component.lower()}.py", {", ".join(args)}"]
+CMD ["python", "base_container/run_{component.lower()}.py", {", ".join(map(repr, args))}]
 '''
 
     # Write Dockerfile to disk
@@ -23,12 +26,27 @@ CMD ["python", "base_container/run_{component.lower()}.py", {", ".join(args)}"]
         f"--name={component.lower()}-container{line}", f"{component.lower()}-image{line}"
     ])
 
+
+def delete_old_dockerfiles(path):
+    files = os.listdir(path)
+    for file in files:
+        os.remove(os.path.join(path,file))
+
 def main():
+    delete_old_dockerfiles("dockerfiles")
+
     with open("components.txt", "r") as file:
         lines = file.readlines()
 
     for i, line in enumerate(lines):
+        # Replace spaces within single or double quotes with a placeholder
+        line = re.sub(r'"([^"]*)"' , lambda x: x.group(0).replace(' ', '|'), line)
+        line = re.sub(r"'([^']*)'", lambda x: x.group(0).replace(' ', '|'), line)
         components = line.strip().split()
+
+        # Replace the placeholders back with spaces in each argument
+        components = [arg.replace('|', ' ') for arg in components]
+
         component_type = components[0]
         create_container(component_type, i, *components[1:])
 
