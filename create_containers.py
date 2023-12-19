@@ -22,7 +22,7 @@ CMD ["python3", "base_container/run_{component.lower()}.py", {", ".join(map(repr
     subprocess.run([
         "docker", "run", "--rm", "--network", "host",
         "-v", "/home/pi/Documents/HouseKeeper/secret_config.json:/app/Documents/HouseKeeper/secret_config.json",
-        "-e", "UDEV=1",
+        "-e", "UDEV=1", "--device", "/dev/gpiomem"
         f"--name={component.lower()}-container{line}", f"{component.lower()}-image{line}"
     ])
 
