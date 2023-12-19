@@ -18,7 +18,7 @@ CMD ["python", "base_container/run_{component.lower()}.py", {", ".join(args)}"]
     ])
     subprocess.run([
         "docker", "run", "-it", "--rm", "--network", "host",
-        "-v", "~/Documents/HouseKeeper/base_container/secret_config.json:/app/Documents/HouseKeeper/base_container/secret_config.json",
+        "-v", "$HOME/Documents/HouseKeeper/base_container/secret_config.json:/app/Documents/HouseKeeper/base_container/secret_config.json",
         "--privileged", "--env", "UDEV=1",
         f"--name={component.lower()}-container", f"{component.lower()}-image{line}"
     ])
