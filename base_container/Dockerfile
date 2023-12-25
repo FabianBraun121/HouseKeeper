@@ -13,9 +13,9 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Clone the project from GitHub
 RUN apt install -y git
-RUN mkdir /app/Documents
-RUN cd /app/Documents && git clone https://github.com/FabianBraun121/HouseKeeper.git
+RUN mkdir /app
+RUN cd /app && git clone https://github.com/FabianBraun121/HouseKeeper.git
 
 # Set the working directory
-WORKDIR /app/Documents/HouseKeeper
+WORKDIR /app/HouseKeeper
 
