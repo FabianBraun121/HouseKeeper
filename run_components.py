@@ -13,13 +13,13 @@ def add_service(docker_compose, component, line, *args):
     docker_compose['services'][service_name] = {'image': 'fabianbraun121/housekeeper:latest'}
 
     # Add optional parameters if provided
-    command = f'python3 base_container/run_{component.lower()}.py {" ".join(map(str, args))}'
+    command = f'python3 base_container/run_{component.lower()}.py{" ".join(map(str, args))}'
     docker_compose['services'][service_name]['command'] = command
-    volume = '- /home/pi/HouseKeeper/secret_config.json:/app/HouseKeeper/secret_config.json'
-    docker_compose['services'][service_name]['volumes'] = volume
+    volume = '/home/pi/HouseKeeper/secret_config.json:/app/HouseKeeper/secret_config.json'
+    docker_compose['services'][service_name]['volumes'] = [volume]
     docker_compose['services'][service_name]['network_mode'] = 'host'
     docker_compose['services'][service_name]['privileged'] = True
-    docker_compose['services'][service_name]['environment'] = 'UDEV=1'
+    docker_compose['services'][service_name]['environment'] = ['UDEV=1']
 
 def generate_docker_compose_file():
     docker_compose = initialize_docker_compose()
