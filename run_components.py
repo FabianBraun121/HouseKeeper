@@ -1,30 +1,29 @@
 import re
 import os
-from jinja2 import Template
+import yaml
 
-def generate_docker_compose(lines):
-    template_content = '''\
-    version: '3'
-    services:
-    {% for i, line in enumerate(lines) %}
-      {{ component_type }}_{{ i }}:
-        image: fabianbraun121/housekeeper:latest
-        command: ["python3", "base_container/run_{{ component_type.lower() }}.py", {{ components[1:] }}]
-        network_mode: host
-        privileged: true
-        volumes:
-          - /home/pi/Documents/HouseKeeper/secret_config.json:/app/Documents/HouseKeeper/secret_config.json
-        environment:
-          - UDEV=1
-    {% endfor %}
-    '''
+def initialize_docker_compose():
+    # Initialize an empty Docker Compose dictionary
+    docker_compose = {'version': '3', 'services': {}}
+    return docker_compose
 
-    template = Template(template_content)
-    rendered_template = template.render(lines=lines)
-    with open("docker-compose.yml", "w") as compose_file:
-        compose_file.write(rendered_template)
+def add_service(docker_compose, component, line, *args):
+    # Add a new service to the Docker Compose dictionary
+    service_name = f'{line}_{component}'
+    docker_compose['services'][service_name] = {'image': 'fabianbraun121/housekeeper:latest'}
 
-def main():
+    # Add optional parameters if provided
+    command = f'python3 base_container/run_{component.lower()}.py {" ".join(map(repr, args))}'
+    docker_compose['services'][service_name]['command'] = command
+    volume = '/home/pi/HouseKeeper/secret_config.json:/app/HouseKeeper/secret_config.json'
+    docker_compose['services'][service_name]['volumes'] = volume
+    docker_compose['services'][service_name]['network_mode'] = 'host'
+    docker_compose['services'][service_name]['privileged'] = True
+    docker_compose['services'][service_name]['environmet'] = 'UDEV=1'
+
+def generate_docker_compose_file():
+    docker_compose = initialize_docker_compose()
+
     with open("components.txt", "r") as file:
         lines = file.readlines()
 
@@ -35,14 +34,18 @@ def main():
         components = [arg.replace('|', ' ') for arg in components]
         component_type = components[0]
 
-    generate_docker_compose(lines)
+        add_service(docker_compose, component_type, i, *components[1:])
+    
+    with open("docker-compose.yml", "w") as file:
+        yaml.dump(docker_compose, file)
 
-    # Build and run containers using Docker Compose
+def main():
+    cleanup()
+    generate_docker_compose_file()
     os.system("docker-compose up --build -d")
 
 def cleanup():
     os.system("docker-compose down -v")
 
 if __name__ == "__main__":
-    cleanup()
     main()
